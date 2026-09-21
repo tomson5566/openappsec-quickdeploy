@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+  appsec-agent:
+    image: ghcr.io/openappsec/agent-unified:1.1.36
+    container_name: appsec-agent
+    environment:
+      - registered_server="NGINX"
+      - AGENT_TOKEN=${APPSEC_AGENT_TOKEN}
+      - autoPolicyLoad=${APPSEC_AUTO_POLICY_LOAD}
+    network_mode: host
+    ipc: host
+    restart: unless-stopped
+    volumes:
+      - ${APPSEC_CONFIG}:/etc/cp/conf
+      - ${APPSEC_DATA}:/etc/cp/data
+      - ${APPSEC_LOGS}:/var/log/nano_agent
+      - ${APPSEC_LOCALCONFIG}:/ext/appsec
+      - /mnt/check-point-shm:/dev/shm/check-point
+      - ${NGINX_CONFIG}:/etc/nginx/conf.d
+      - ${APPSEC_MODEL}:/advanced-model/open-appsec-advanced-model.tgz:ro
+    command: /cp-nano-agent
